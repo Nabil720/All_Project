@@ -1,0 +1,61 @@
+name: Build, Push Docker Images and Update GitOps Repo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      GITOPS_PAT: ${{ secrets.GITOPS_PAT }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set commit SHA
+      id: vars
+      run: echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ env.DOCKER_HUB_USERNAME }}
+        password: ${{ env.DOCKER_HUB_PASSWORD }}
+
+    - name: Build and push backend image
+      run: |
+        docker build -t $DOCKER_HUB_USERNAME/kindergarten-backend:${COMMIT_SHA} ./backend
+        docker push $DOCKER_HUB_USERNAME/kindergarten-backend:${COMMIT_SHA}
+
+    - name: Build and push frontend image
+      run: |
+        docker build -t $DOCKER_HUB_USERNAME/kindergarten-frontend:${COMMIT_SHA} ./frontend
+        docker push $DOCKER_HUB_USERNAME/kindergarten-frontend:${COMMIT_SHA}
+
+    - name: Clone GitOps repo and update image tags
+      run: |
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "Your Name"
+
+        git clone https://x-access-token:${GITOPS_PAT}@github.com/your-org/gitops-repo.git gitops
+        cd gitops
+
+        sed -i "s|image: .*kindergarten-backend:.*|image: $DOCKER_HUB_USERNAME/kindergarten-backend:${COMMIT_SHA}|" ./backend/deployment.yaml
+        sed -i "s|image: .*kindergarten-frontend:.*|image: $DOCKER_HUB_USERNAME/kindergarten-frontend:${COMMIT_SHA}|" ./frontend/deployment.yaml
+
+        git add .
+        if git diff --cached --quiet; then
+          echo "No changes in GitOps repo."
+        else
+          git commit -m "Update backend & frontend image tags to ${COMMIT_SHA}"
+          git push origin main
+        fi
