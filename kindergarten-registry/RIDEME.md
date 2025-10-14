@@ -1,4 +1,5 @@
-# Linux based hosting
+<h1 style="color: #1bf89cff; font-size: 48px; font-weight: bold;">Linux Based Hosting</h1>
+
 
 ## Kindergarten Registry — React + Go + MongoDB (Deployed with Nginx)
 
@@ -201,9 +202,8 @@ http://34.236.155.125
 
 
 
+<h1 style="color: #1bf89cff; font-size: 48px; font-weight: bold;">Docker based hosting</h1>
 
-
-# Docker based hosting
 
 ## Kindergarten Registry
 
@@ -369,8 +369,8 @@ npm run build
 
 
 
-# EKS Cluster based hosting
 
+<h1 style="color: #1bf89cff; font-size: 48px; font-weight: bold;">EKS Cluster based hosting</h1>
 
 
 ## Install Tools
