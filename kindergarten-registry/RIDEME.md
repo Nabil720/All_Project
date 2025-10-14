@@ -8,13 +8,13 @@ It is deployed on an AWS EC2 (Ubuntu t3.micro) instance using Nginx as a reverse
 ---
 
 ## Project Structure
-
+```
 All_Project/
 ├── kindergarten-registry/
 │ ├── backend/ # Go server (API)
 │ ├── frontend/ # React application
 │ ├── docker-compose.yml # MongoDB service
-
+```
 
 ---
 
@@ -150,7 +150,7 @@ http://34.236.155.125
 ## Kindergarten Registry
 
 A full-stack React + Node.js + MongoDB application deployed using Docker.
-
+```
 All_Project/
 └── kindergarten-registry/
     ├── backend/          # Node.js/Express backend
@@ -158,7 +158,7 @@ All_Project/
     │   ├── build/        # Production build (generated)
     │   └── nginx.conf    # Nginx reverse proxy config
     └── docker-compose.yml
-
+```
 
 ### nginx.conf
 ```
