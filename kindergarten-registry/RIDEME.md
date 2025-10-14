@@ -141,7 +141,19 @@ http://34.236.155.125
 ![Instance View](./Images/Screenshot%20from%202025-10-12%2017-57-13.png)
 
 
+
+
+
+
+
+
+
+
+
+
+
 -----------------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -150,6 +162,30 @@ http://34.236.155.125
 ## Kindergarten Registry
 
 A full-stack React + Node.js + MongoDB application deployed using Docker.
+
+
+## Setup & Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/Nabil720/All_Project.git
+cd All_Project/kindergarten-registry
+```
+2. Update system and install dependencies
+
+```
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install docker.io docker-compose -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+
+
 ```
 All_Project/
 └── kindergarten-registry/
@@ -160,8 +196,23 @@ All_Project/
     └── docker-compose.yml
 ```
 
-### nginx.conf
+
+
+
+
+## Nginx Docker Setup
+
+Our project uses an Nginx Docker setup. To configure it properly:
+
+1. Add the `nginx.conf` file
+
+
+2. Update the `frontend/Dockerfile`
+
+
 ```
+### nginx.conf
+
 server {
     listen 80;
 
@@ -185,9 +236,8 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-```
+
 ## frontend/Dockerfile
-```
 
 FROM nginx:alpine
 
@@ -200,26 +250,6 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-## Setup & Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/Nabil720/All_Project.git
-cd All_Project/kindergarten-registry
-```
-2. Update system and install dependencies
-
-```
-sudo apt update -y
-sudo apt upgrade -y
-sudo apt install docker.io docker-compose -y
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
 3. Build frontend
 
 ```
@@ -228,7 +258,7 @@ npm install
 npm run build
 ```
 
-docker-compose up -d
+## docker-compose up -d
 
 
 ![Website View](./Images/d3.png)
