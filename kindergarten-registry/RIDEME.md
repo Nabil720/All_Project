@@ -135,6 +135,50 @@ http://34.236.155.125
 
 ```
 
+
+
+## Applicatio architecture
+
+```
+                    +---------------------+
+                    |     Web Browser     |
+                    | (React Frontend UI) |
+                    +---------+-----------+
+                              |
+                              v
+                    +---------------------+
+                    |       Nginx         |
+                    | (Reverse Proxy)     |
+                    +----+----------+-----+
+                         |          |
+          Static Files   |          |  API Requests
+                         v          v
+        +-------------------+   +-------------------+
+        | React Build Files |   |    Go API Server  |
+        | (frontend/build)  |   | (Handles logic &  |
+        +-------------------+   |  connects to DB)  |
+                                +---------+---------+
+                                          |
+                                          v
+                                +-------------------+
+                                |     MongoDB       |
+                                |  (Student Records)|
+                                +-------------------+
+
+                  Entire stack hosted on:
+                  +-------------------------+
+                  |      AWS EC2 (Ubuntu)   |
+                  | - Docker (MongoDB)      |
+                  | - Node.js & Go Runtime  |
+                  | - Nginx Web Server      |
+                  +-------------------------+
+
+
+
+```
+
+
+
 ![Website View](./Images/Screenshot%20from%202025-10-12%2017-57-05.png)
 
 
@@ -153,6 +197,8 @@ http://34.236.155.125
 
 
 -----------------------------------------------------------------------------------------------------------------
+
+
 
 
 
@@ -259,6 +305,53 @@ npm run build
 ```
 
 ## docker-compose up -d
+
+
+
+
+##  Applicatio architecture
+
+
+```
+
+                        +-----------------------+
+                        |     Web Browser       |
+                        |   (User Interface)    |
+                        +-----------+-----------+
+                                    |
+                                    v
+                        +-----------------------+
+                        |      Nginx Container   |
+                        |  (Serves React + API)  |
+                        +-----------+-----------+
+                                    |
+               +--------------------+--------------------+
+               |                                         |
+               v                                         v
+     +--------------------+                    +---------------------+
+     | React Frontend App |                    |       go  Backend   |
+     | (Static Build in   |                    | (Express API Server |
+     | Nginx HTML folder) |                    |  on /api/* routes)  |
+     +--------------------+                    +----------+----------+
+                                                          |
+                                                          v
+                                             +------------------------+
+                                             |      MongoDB Container |
+                                             |   (Student Data Store) |
+                                             +------------------------+
+
+         All services run as Docker containers using `docker-compose`
+
+         +----------------------------------------------------------+
+         |                   Host Machine (e.g., Ubuntu VM)         |
+         |  - Docker Engine                                         |
+         |  - docker-compose                                        |
+         |  - Exposes ports to internet (via Nginx on port 80)      |
+         +----------------------------------------------------------+
+
+
+
+```
 
 
 ![Website View](./Images/d3.png)
@@ -388,6 +481,49 @@ eksctl create addon \
   --service-account-role-arn arn:aws:iam::<ACCOUNT_ID>:role/AmazonEKS_EBS_CSI_DriverRole \
   --force
 ```
+
+
+##  Applicatio architecture
+
+```
+                                   +-----------------------+
+                                   |    Web Browser        |
+                                   | (React Frontend UI)   |
+                                   +-----------+-----------+
+                                               |
+                                               v
+                                   +-----------------------+
+                                   |     Nginx Ingress     |
+                                   | (Routing and Proxy)   |
+                                   +-----------+-----------+
+                                               |
+                                               v
+                     +--------------------------------------------+
+                     |   EKS Cluster (Kubernetes Environment)     |
+                     |                                            |
+                     |  +-------------------+   +-------------+ |
+                     |  |   React Frontend   |   | go           | |
+                     |  | (Pod - Static App) |   | Backend      | |
+                     |  | (Nginx Serve)      |   | (Express API)| |
+                     |  +-------------------+   +-------------+ |
+                     |             |                  |         |
+                     |             v                  v         |
+                     |  +--------------------------+------------+|
+                     |  |     MongoDB (Pod)         |            |
+                     |  | (Persistent Volume)       |            |
+                     |  +--------------------------+------------+|
+                     +--------------------------------------------+
+                                    |
+                                    v
+                          +------------------------+
+                          |     AWS EBS (Storage)  |
+                          | (Persistent Volumes)   |
+                          +------------------------+
+
+
+```
+
+
 
 
 ![Website View](./Images/k1.png)
