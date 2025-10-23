@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: django
-          image: nanil0034/notes-app:django_app
+          image: nanil0034/notes-app:54
           ports:
             - containerPort: 8000
           command: ["sh", "-c", "python manage.py migrate --noinput && gunicorn notesapp.wsgi --bind 0.0.0.0:8000"]
