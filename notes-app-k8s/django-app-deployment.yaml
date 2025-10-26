@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,7 +21,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: django-env-config
-          restartPolicy: Always
           readinessProbe:
             httpGet:
               path: /admin
@@ -44,4 +42,3 @@ spec:
       port: 8000
       targetPort: 8000
   type: ClusterIP
-
