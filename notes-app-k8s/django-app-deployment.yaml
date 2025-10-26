@@ -20,23 +20,17 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
-              echo "Waiting for MySQL to be ready..."
-              sleep 30
+              echo "Setting environment variables..."
+              export DATABASE_HOST=mysql-service
+              export DATABASE_PORT=3306
+              export DATABASE_NAME=test_db
+              export DATABASE_USER=root
+              export DATABASE_PASSWORD=root
+              
               echo "Starting Django application..."
-              python manage.py migrate --noinput || echo "Migration failed"
+              python manage.py migrate --noinput
               echo "Starting Gunicorn..."
-              gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000 --workers=2 --log-level=debug
-          env:
-            - name: DATABASE_HOST
-              value: "mysql-service"
-            - name: DATABASE_PORT
-              value: "3306"
-            - name: DATABASE_NAME
-              value: "test_db"
-            - name: DATABASE_USER
-              value: "root"
-            - name: DATABASE_PASSWORD
-              value: "root"  # সরাসরি value দিন (Secret থেকে নেওয়া কাজ করছে না)
+              gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000 --workers=2
           resources:
             requests:
               memory: "256Mi"
