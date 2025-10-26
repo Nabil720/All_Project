@@ -24,7 +24,9 @@ spec:
               value: "%"
           ports:
             - containerPort: 3306
-          # No volume mounts for now
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
           resources:
             requests:
               memory: "512Mi"
@@ -32,6 +34,10 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc  # Reference to the PVC
 ---
 apiVersion: v1
 kind: Service
@@ -45,3 +51,15 @@ spec:
       port: 3306
       targetPort: 3306
   type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc  # PVC name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
