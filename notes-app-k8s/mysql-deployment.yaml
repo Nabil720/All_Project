@@ -34,7 +34,6 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-          # Remove problematic health checks for now
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
