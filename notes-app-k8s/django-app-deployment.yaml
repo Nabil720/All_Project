@@ -20,20 +20,23 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
+              echo "Waiting for MySQL to be ready..."
+              sleep 30
               echo "Starting Django application..."
               python manage.py migrate --noinput || echo "Migration failed"
               echo "Starting Gunicorn..."
               gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000 --workers=2 --log-level=debug
-          envFrom:
-            - configMapRef:
-                name: django-env-config
-          # Explicitly add DATABASE_PASSWORD from Secret
           env:
+            - name: DATABASE_HOST
+              value: "mysql-service"
+            - name: DATABASE_PORT
+              value: "3306"
+            - name: DATABASE_NAME
+              value: "test_db"
+            - name: DATABASE_USER
+              value: "root"
             - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-root-password
+              value: "root"  # সরাসরি value দিন (Secret থেকে নেওয়া কাজ করছে না)
           resources:
             requests:
               memory: "256Mi"
