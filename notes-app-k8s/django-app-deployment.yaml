@@ -20,17 +20,31 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
-              echo "Setting environment variables..."
-              export DATABASE_HOST=mysql-service
-              export DATABASE_PORT=3306
-              export DATABASE_NAME=test_db
-              export DATABASE_USER=root
-              export DATABASE_PASSWORD=root
+              echo "Waiting for MySQL to be ready..."
+              # Wait for MySQL service
+              while ! nc -z mysql-service 3306; do
+                sleep 1
+              done
+              echo "MySQL is ready!"
               
-              echo "Starting Django application..."
-              python manage.py migrate --noinput
+              echo "Running migrations..."
+              cd /app/backend && python manage.py migrate --noinput
+              
               echo "Starting Gunicorn..."
-              gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000 --workers=2
+              cd /app/backend && exec gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000 --workers=2 --access-logfile -
+          env:
+            - name: DATABASE_HOST
+              value: "mysql-service"
+            - name: DATABASE_PORT
+              value: "3306"
+            - name: DATABASE_NAME
+              value: "test_db"
+            - name: DATABASE_USER
+              value: "root"
+            - name: DATABASE_PASSWORD
+              value: "root"
+            - name: DJANGO_SETTINGS_MODULE
+              value: "notesapp.settings"
           resources:
             requests:
               memory: "256Mi"
@@ -38,6 +52,18 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/notes/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/notes/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
@@ -50,5 +76,5 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-      nodePort: 30080  # Optional: specify a port (30000-32767)
+      nodePort: 30080
   type: NodePort
