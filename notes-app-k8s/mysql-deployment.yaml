@@ -24,9 +24,7 @@ spec:
               value: "%"
           ports:
             - containerPort: 3306
-          volumeMounts:
-            - name: mysql-data
-              mountPath: /var/lib/mysql
+          # No volume mounts for now
           resources:
             requests:
               memory: "512Mi"
@@ -34,10 +32,6 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-      volumes:
-        - name: mysql-data
-          persistentVolumeClaim:
-            claimName: mysql-pvc
 ---
 apiVersion: v1
 kind: Service
