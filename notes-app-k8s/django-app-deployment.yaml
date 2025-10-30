@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: django
-          image: nanil0034/notes-app:23
+          image: nanil0034/notes-app:24
           ports:
             - containerPort: 8000
           command: ["sh", "-c"]
