@@ -7,8 +7,11 @@ WORKDIR /app
 # Copy the package.json and package-lock.json to the container
 COPY package*.json ./
 
-# Install the app dependencies
+# Install the app dependencies (including react-scripts)
 RUN npm install
+
+# Verify installation
+RUN npm list react-scripts
 
 # Copy the rest of the app's files into the container
 COPY . .
